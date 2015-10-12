@@ -1,0 +1,3 @@
+57 01 4b 46 7f ff 09 10 c7 : crc=c7 YES ; I have no idea what this data is
+57 01 4b 46 7f ff 09 10 c7 t=21437      ; t = temperature in muC.  21437 = 21.437 degrees C
+
