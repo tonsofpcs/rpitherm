@@ -6,7 +6,7 @@
 #######################################
 
 print "importing"
-import datetime
+from datetime import datetime, timedelta
 import numpy as np
 import re
 import matplotlib as mpl
@@ -45,7 +45,7 @@ def moving_average(x, n, type='simple'):
 print "defining statuses"
 statuses = { "WARMING"    : 70.8,
              "COOLING"    : 69.2,
-             "At target." : 70,
+             "At target." : 70.0,
              "Hold-off."  : 70.2
            }
 
@@ -53,7 +53,7 @@ print "generating regexp"
 regexptest = re.compile(' \\] |:  |: |\\+ | ,- | , ')
 
 print "setting log source"
-log_source = "../main/sample.log"
+log_source = "../examples/newsample.log"
 
 logdata_avg         = []
 logdata_target      = []
@@ -66,47 +66,47 @@ print "opening log file"
 logfile = open(log_source)
 
 print "setting plot times"
-logdataend    = datetime.datetime.now()
-logdatastart  = logdataend - datetime.timedelta(days=8)
-logdatastart2 = logdataend - datetime.timedelta(hours=28)
-logdatastart3 = logdataend - datetime.timedelta(hours=2)
+logdataend    = datetime.now()
+logdatastart  = logdataend - timedelta(days=8)
+logdatastart2 = logdataend - timedelta(hours=28)
+logdatastart3 = logdataend - timedelta(hours=2)
 print "Start of chart: ", logdatastart
 print "Start of chart2:", logdatastart2
 print "Start of chart3:", logdatastart3
 print "End of chart:   ", logdataend
 
-strp = datetime.datetime.strptime
 print "reading log file"
 for line in logfile:
-  logdataitem = re.split(regexptest,line.lstrip('[ ').rstrip('\n'))
-  logdatestr = logdataitem[0]
-  
-  if len(logdataitem) > 1:
-    if '\x00' not in logdatestr:
-      try: 
-        logdataitemdate = strp(logdatestr, '%Y-%m-%d %H:%M:%S.%f')
-      except:
-        logdataitemdate = strp(logdatestr, '%Y-%m-%d %H:%M:%S')
-      logdatatype = logdataitem[1]
-      if True:
-        if logdatatype == 'AVG':
-          logavg = float(logdataitem[2])
-          logdata_avg.append([logdataitemdate, logavg])
-        elif logdatatype == "Status":
-          logdata_status.append(logdataitemdate, statuses[logavg])
-        elif logdatatype == 'Target':
-          target     = float(logdataitem[2])
-          hightarget = target + float(logdataitem[5])
-          lowtarget  = target - float(logdataitem[6])
+  logyear  = int(line[2:6])
+  logmonth = int(line[7:9])
+  logday   = int(line[10:12])
+  loghr    = int(line[13:15])
+  logmin   = int(line[16:18])
+  logsec   = int(line[19:21])
+  logdataitemdate = datetime(logyear, logmonth, logday,
+                             loghr,   logmin,   logsec)
+  if len(line) > 1:
+    if True:
+      if line[31:34] == 'AVG':
+        logdata_avg.append([logdataitemdate, float(line[37:43])])
+      elif line[31:37] == "Status":
+        logdata_status.append([logdataitemdate, statuses[line[39:-1]]])
+      elif line[31:37] == "Target":
+        target = float(line[40:44])
+        hightarget = target + float(line[61:64])
+        lowtarget  = target - float(line[68:71])
 
-          logdata_target.append([logdataitemdate, target])
-          logdata_target_high.append([logdataitemdate, hightarget])
-          logdata_target_low.append([logdataitemdate, lowtarget])
+        logdata_target.append([logdataitemdate, target])
+        logdata_target_high.append([logdataitemdate, hightarget])
+        logdata_target_low.append([logdataitemdate, lowtarget])
 
 print "Log data loaded"
 logfile.close()
 logdata = ''
 print "log file closed"
+
+if len(logdata_status) == 0:
+  raise Exception('Status array empty.')
 
 print "handling data"
 array_avg = np.array(logdata_avg)
@@ -129,10 +129,6 @@ fig, ax = plt.subplots()
 
 trans = mtransforms.blended_transform_factory(ax.transData, 
                                               ax.transAxes)
-# TODO: Use script on more recent log file.
-# Right now, these break the script due to
-# array_status being empty. It's empty because
-# there are no "Status:" logs.
 ax.fill_between(array_status[:,0], -1, 101, 
                 where=array_status[:,1]==70.8, 
                 facecolor='red', 
