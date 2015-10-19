@@ -4,11 +4,12 @@
 # 2014-04-13                          #
 # Eric Adler                          #
 #######################################
-
 print "importing"
 from datetime import datetime, timedelta
+
+from scipy import signal
 import numpy as np
-import re
+
 import matplotlib as mpl
 mpl.use('Agg')
 print "importing ."
@@ -33,12 +34,12 @@ def moving_average(x, n, type='simple'):
     """
     if type=='simple':
         weights = np.ones(n)
-    else:
+    elif type=='exponential':
         weights = np.exp(np.linspace(-1., 0., n))
 
     weights /= weights.sum()
 
-    a =  np.convolve(x, weights, mode='full')[:len(x)]
+    a = signal.fftconvolve(x, weights, mode='full')[:len(x)]
     a[:n] = a[n]
     return a
 
@@ -48,9 +49,6 @@ statuses = { "WARMING"    : 70.8,
              "At target." : 70.0,
              "Hold-off."  : 70.2
            }
-
-print "generating regexp"
-regexptest = re.compile(' \\] |:  |: |\\+ | ,- | , ')
 
 print "setting log source"
 log_source = "../examples/newsample.log"
@@ -63,7 +61,7 @@ logdata_status      = []
 logdataitem         = []
 
 print "opening log file"
-logfile = open(log_source)
+logfile = open(log_source, 'r')
 
 print "setting plot times"
 logdataend    = datetime.now()
@@ -85,20 +83,19 @@ for line in logfile:
   logsec   = int(line[19:21])
   logdataitemdate = datetime(logyear, logmonth, logday,
                              loghr,   logmin,   logsec)
-  if len(line) > 1:
-    if True:
-      if line[31:34] == 'AVG':
-        logdata_avg.append([logdataitemdate, float(line[37:43])])
-      elif line[31:37] == "Status":
-        logdata_status.append([logdataitemdate, statuses[line[39:-1]]])
-      elif line[31:37] == "Target":
-        target = float(line[40:44])
-        hightarget = target + float(line[61:64])
-        lowtarget  = target - float(line[68:71])
+  if logdataitemdate >= logdatastart:
+    if line[31:34] == 'AVG':
+      logdata_avg.append([logdataitemdate, float(line[37:43])])
+    elif line[31:37] == "Status":
+      logdata_status.append([logdataitemdate, statuses[line[39:-1]]])
+    elif line[31:37] == "Target":
+      target = float(line[40:44])
+      hightarget = target + float(line[61:64])
+      lowtarget  = target - float(line[68:71])
 
-        logdata_target.append([logdataitemdate, target])
-        logdata_target_high.append([logdataitemdate, hightarget])
-        logdata_target_low.append([logdataitemdate, lowtarget])
+      logdata_target.append([logdataitemdate, target])
+      logdata_target_high.append([logdataitemdate, hightarget])
+      logdata_target_low.append([logdataitemdate, lowtarget])
 
 print "Log data loaded"
 logfile.close()
@@ -129,28 +126,31 @@ fig, ax = plt.subplots()
 
 trans = mtransforms.blended_transform_factory(ax.transData, 
                                               ax.transAxes)
-ax.fill_between(array_status[:,0], -1, 101, 
+
+arr_status_strs = array_status[:,0]
+
+ax.fill_between(arr_status_strs, -1, 101, 
                 where=array_status[:,1]==70.8, 
                 facecolor='red', 
                 edgecolor='none', 
                 alpha=0.3, 
                 transform=trans)
 
-ax.fill_between(array_status[:,0], -1, 101, 
+ax.fill_between(arr_status_strs, -1, 101, 
                 where=array_status[:,1]==69.2, 
                 facecolor='blue', 
                 edgecolor='none', 
                 alpha=0.3, 
                 transform=trans)
 
-ax.fill_between(array_status[:,0], -1, 101, 
+ax.fill_between(arr_status_strs, -1, 101, 
                 where=array_status[:,1]==70, 
                 facecolor='green', 
                 edgecolor='none', 
                 alpha=0.4, 
                 transform=trans)
 
-ax.fill_between(array_status[:,0], -1, 101, 
+ax.fill_between(arr_status_strs, -1, 101, 
                 where=array_status[:,1]==70.2, 
                 facecolor='green', 
                 edgecolor='none', 
@@ -158,21 +158,25 @@ ax.fill_between(array_status[:,0], -1, 101,
                 transform=trans)
 
 print "plotted status array"
+
 ax.plot(array_avg[:,0], 
         array_avg[:,1], 
         'b', 
         lw=1)
 print "plotted avg array"
+
 ax.plot(array_avg[:,0], 
         array_avg_y, 
         'r', 
         lw=1)
-print "plotted moving average (1500) array"
+print "plotted moving average ({0}) array".format(len(array_avg_y))
+
 ax.plot(array_upperbound[:,0], 
         array_upperbound[:,1], 
         'k', 
         lw=1)
 print "plotted upperbound array"
+
 ax.plot(array_lowerbound[:,0], 
         array_lowerbound[:,1], 
         'k', 
@@ -189,7 +193,7 @@ fig.autofmt_xdate()
 
 print "formatting set, saving file..."
 
-plt.savefig('../week.png')
+plt.savefig('../week.png', dpi=50)
 
 print "saving file2..."
 ax.set_xlim(logdatastart2,logdataend)
@@ -201,7 +205,5 @@ plt.savefig('../hour.png')
 
 print "done!"
 
+
 quit()
-r.sort()
-
-
