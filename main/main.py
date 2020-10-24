@@ -65,12 +65,6 @@ def read_cfg():
     heat_tolerance = float(rcfg_data[1])
     cool_tolerance = float(rcfg_data[2])
     hysteresis = float(rcfg_data[3])
-    if (target_temp == 0):
-        rfile = open(cfg_source)
-        rcfg = rfile.read()
-        rfile.close()
-        rcfg_data = rcfg.split(",")
-        target_temp = float(rcfg_data[0])    
     print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     sys.stdout.flush()
 
