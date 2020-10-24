@@ -1,7 +1,9 @@
 #!/usr/bin/python
 ###############################################
 # 2014-03-16                                  #
-# last modified 2014-03-19                    #
+# modified 2014-03-19                         #
+# modified 2019-07-18                         #
+# modified 2020-10-24                         #
 # Thermostatic control of energy consumption  #
 # ## Python for Raspberry Pi     ##           #
 # Eric Adler   <tonsofpcs@gmail.com>          #
@@ -17,6 +19,8 @@ from time import sleep
 import RPi.GPIO as GPIO
 import collections
 GPIO.setmode(GPIO.BCM)
+calib = -1.2 #temperature sensor calibration adjustment
+calib = calib * 1000
 target_temp = 65.0
 current_temp = collections.deque([], 10)
 heat_tolerance = 2.0
@@ -58,6 +62,12 @@ def read_cfg():
     heat_tolerance = float(rcfg_data[1])
     cool_tolerance = float(rcfg_data[2])
     hysteresis = float(rcfg_data[3])
+    if (target_temp == 0):
+        rfile = open(temp_source)
+        rcfg = rfile.read()
+        rfile.close()
+        rcfg_data = rcfg.split(",")
+        target_temp = float(rcfg_data[0])    
     print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     sys.stdout.flush()
 
@@ -85,6 +95,7 @@ def get_temp_F():
     secondline = text.split("\n")[1]
     temperaturedata = secondline.split(" ")[9]
     temperature = float(temperaturedata[2:])
+    temperature = temperature + calib
     temperature = (temperature * 1.8 + 32000) / 1000
     return temperature
 
