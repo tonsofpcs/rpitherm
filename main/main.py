@@ -66,7 +66,7 @@ def read_cfg():
     cool_tolerance = float(rcfg_data[2])
     hysteresis = float(rcfg_data[3])
     if (target_temp == 0):
-        rfile = open(temp_source)
+        rfile = open(cfg_source)
         rcfg = rfile.read()
         rfile.close()
         rcfg_data = rcfg.split(",")
