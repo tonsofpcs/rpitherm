@@ -172,9 +172,9 @@ def act_temp():
     dbconn = sqlite3.connect(sqlite_database)
     db = dbconn.cursor()
 
-    sqlcommand = "INSERT INTO target_log (" + str(int(time.time()) + "," + target_temp + "," + targethigh + "," + targetlow + "," + hysteresis + ");"
+    sqlcommand = "INSERT INTO target_log (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
     db.execute(sqlcommand)
-    db.execute("INSERT INTO temps (? , ?);", str(int(time.time()), comp_temp) )
+    db.execute("INSERT INTO temps (" + str(int(time.time())) + "," + str(comp_temp) +");" )
     db.commit()
 
     dbconn.close()
