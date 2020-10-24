@@ -18,7 +18,7 @@ import sys
 from time import sleep
 import RPi.GPIO as GPIO
 import collections
-import sqlite3
+import sqlite
 
 GPIO.setmode(GPIO.BCM)
 calib = -1.2 #temperature sensor calibration adjustment
@@ -168,7 +168,7 @@ def act_temp():
     targethigh = target_temp + heat_tolerance
     targetlow = target_temp - cool_tolerance
 
-    dbconn = sqlite3.connect(sqlite_database)
+    dbconn = sqlite.connect(sqlite_database)
     db = dbconn.cursor
 
     db.execute("INSERT INTO target_log (?, ?, ?, ?, ?)", (int(time.time), target_temp, targethigh, targetlow, hysteresis))
