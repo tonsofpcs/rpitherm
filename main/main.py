@@ -51,6 +51,8 @@ GPIO.setup(gpo_warn, GPIO.OUT)
 # LED3 - hold-off (hysteresis)
 GPIO.setup(gpo_hold, GPIO.OUT) 
 in_hysteresis = 1
+dbconn = 0
+db = 0
 
 #read config
 def read_cfg():
