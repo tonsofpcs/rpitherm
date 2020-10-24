@@ -172,8 +172,8 @@ def act_temp():
     dbconn = sqlite3.connect(sqlite_database)
     db = dbconn.cursor()
 
-    db.execute("INSERT INTO target_log (?, ?, ?, ?, ?)", (int(time.time), target_temp, targethigh, targetlow, hysteresis))
-    db.execute("INSERT INTO temps (? , ?)", (int(time.time), comp_temp) )
+    db.execute("INSERT INTO target_log (?, ?, ?, ?, ?)", (int(time.time()), target_temp, targethigh, targetlow, hysteresis))
+    db.execute("INSERT INTO temps (? , ?)", (int(time.time()), comp_temp) )
     db.commit()
 
     dbconn.close()
