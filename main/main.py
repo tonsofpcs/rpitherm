@@ -18,9 +18,12 @@ import sys
 from time import sleep
 import RPi.GPIO as GPIO
 import collections
+import sqlite3
+
 GPIO.setmode(GPIO.BCM)
 calib = -1.2 #temperature sensor calibration adjustment
 calib = calib * 1000
+sqlite_database = "thermo.sqlite"
 target_temp = 65.0
 current_temp = collections.deque([], 10)
 heat_tolerance = 2.0
@@ -122,6 +125,9 @@ def first_runtime():
         print "[",datetime.datetime.now(),"] Temp reading for ",x,": ",newtemp
         sys.stdout.flush()
     
+    dbconn = sqlite3.connect(sqlite_database)
+    db = dbconn.cursor
+
     read_cfg()
     read_speeds()
 
@@ -160,7 +166,13 @@ def act_temp():
     max_temp = max(current_temp)
     # write AVG and variables(target,heat_tolerance,cool_tolerance) to std-err as "Temp AVG: %d; Target: %d; Tolerances: +%u,-%u".
     print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
+    
+    #CREATE TABLE target_log(datetime INTEGER PRIMARY KEY, target DECIMAL(4,1), targethigh DECIMAL(4,1), targetlow DECIMAL(4,1), hysteresis DECIMAL(4,1));
+    #CREATE TABLE temps(datetime INTEGER PRIMARY KEY, temp DECIMAL(4,1));
+    
+    db.execute("INSERT INTO target_log (" + int(time.time) + "," target_temp "," + (target_temp + heat_tolerance) + "," + (target_temp - cool_tolerance) + "," + hysteresis + ")" )
     print "[",datetime.datetime.now(),"] AVG: ",comp_temp
+    db.execute("INSERT INTO temps (" + int(time.time) + "," + comp_temp + ")" )
     print "[",datetime.datetime.now(),"] MAX: ",max_temp
     sys.stdout.flush()
     #debug print "Hystereis status:",in_hysteresis
