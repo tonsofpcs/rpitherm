@@ -167,19 +167,24 @@ def act_temp():
     # write AVG and variables(target,heat_tolerance,cool_tolerance) to std-err as "Temp AVG: %d; Target: %d; Tolerances: +%u,-%u".
     print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     
+    print "[",datetime.datetime.now(),"] AVG: ",comp_temp
+    print "[",datetime.datetime.now(),"] MAX: ",max_temp
+    sys.stdout.flush()
+
     #CREATE TABLE target_log(datetime INTEGER PRIMARY KEY, target DECIMAL(4,1), targethigh DECIMAL(4,1), targetlow DECIMAL(4,1), hysteresis DECIMAL(4,1));
     #CREATE TABLE temps(datetime INTEGER PRIMARY KEY, temp DECIMAL(4,1));
     
-    db.execute("INSERT INTO target_log (" + int(time.time) + "," target_temp "," + (target_temp + heat_tolerance) + "," + (target_temp - cool_tolerance) + "," + hysteresis + ")" )
-    print "[",datetime.datetime.now(),"] AVG: ",comp_temp
-    db.execute("INSERT INTO temps (" + int(time.time) + "," + comp_temp + ")" )
-    print "[",datetime.datetime.now(),"] MAX: ",max_temp
-    sys.stdout.flush()
+    targethigh = target_temp + heat_tolerance
+    targetlow = target_temp - cool_tolerance
+
+    db.execute("INSERT INTO target_log (" + time.time + "," target_temp "," + targethigh + "," + targetlow + "," + hysteresis + ")" )
+    db.execute("INSERT INTO temps (" + time.time + "," + comp_temp + ")" )
+    db.commit()
     #debug print "Hystereis status:",in_hysteresis
 
     # > target+heat_tolerance+hysteresis //We're too warm, let's try to cool down
     #debug print "compare temp with [>] ",(target_temp + heat_tolerance + (hysteresis * in_hysteresis))
-    if (comp_temp > (target_temp + heat_tolerance + (hysteresis * in_hysteresis))):
+    if (comp_temp > (targethigh + (hysteresis * in_hysteresis))):
         GPIO.output(gpo_heat, GPIO.LOW)
         GPIO.output(gpo_target, GPIO.LOW)
         GPIO.output(gpo_warn, GPIO.LOW)
@@ -192,7 +197,7 @@ def act_temp():
     
     # < target-cool_tolerance-hysteresis  //We're too cold, let's try to warm up
     #debug print "compare temp with [<] ",(target_temp - cool_tolerance - (hysteresis * in_hysteresis))
-    if (comp_temp < (target_temp - cool_tolerance - (hysteresis * in_hysteresis))):
+    if (comp_temp < (targetlow - (hysteresis * in_hysteresis))):
         GPIO.output(gpo_cool, GPIO.LOW)
         GPIO.output(gpo_target, GPIO.LOW)
         GPIO.output(gpo_warn, GPIO.LOW)
@@ -205,7 +210,7 @@ def act_temp():
 
     # <= target+heat_tolerance && >= target+cool_tolerance // temperature's good! Stop adjusting.
     #debug print "compare temp with [<=] ",(target_temp + heat_tolerance)," [>=] ", (target_temp - cool_tolerance)
-    if ((comp_temp <= (target_temp + heat_tolerance)) and (comp_temp >= (target_temp - cool_tolerance))):
+    if ((comp_temp <= (targethigh)) and (comp_temp >= (targetlow))):
         GPIO.output(gpo_heat, GPIO.LOW)
         GPIO.output(gpo_cool, GPIO.LOW)
         GPIO.output(gpo_target, GPIO.HIGH)
