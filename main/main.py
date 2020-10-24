@@ -177,8 +177,10 @@ def act_temp():
     targethigh = target_temp + heat_tolerance
     targetlow = target_temp - cool_tolerance
 
-    db.execute("INSERT INTO target_log (" + time.time + "," target_temp "," + targethigh + "," + targetlow + "," + hysteresis + ")" )
-    db.execute("INSERT INTO temps (" + time.time + "," + comp_temp + ")" )
+    
+
+    db.execute("INSERT INTO target_log (?, ?, ?, ?, ?)", (int(time.time), target_temp, targethigh, targetlow, hysteresis))
+    db.execute("INSERT INTO temps (? , ?)", (int(time.time), comp_temp) )
     db.commit()
     #debug print "Hystereis status:",in_hysteresis
 
