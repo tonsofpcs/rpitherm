@@ -51,8 +51,6 @@ GPIO.setup(gpo_warn, GPIO.OUT)
 # LED3 - hold-off (hysteresis)
 GPIO.setup(gpo_hold, GPIO.OUT) 
 in_hysteresis = 1
-dbconn = 0
-db = 0
 
 #read config
 def read_cfg():
@@ -121,9 +119,6 @@ def first_runtime():
         print "[",datetime.datetime.now(),"] Temp reading for ",x,": ",newtemp
         sys.stdout.flush()
     
-    dbconn = sqlite3.connect(sqlite_database)
-    db = dbconn.cursor
-
     read_cfg()
     read_speeds()
 
@@ -173,11 +168,14 @@ def act_temp():
     targethigh = target_temp + heat_tolerance
     targetlow = target_temp - cool_tolerance
 
-    
+    dbconn = sqlite3.connect(sqlite_database)
+    db = dbconn.cursor
 
     db.execute("INSERT INTO target_log (?, ?, ?, ?, ?)", (int(time.time), target_temp, targethigh, targetlow, hysteresis))
     db.execute("INSERT INTO temps (? , ?)", (int(time.time), comp_temp) )
     db.commit()
+
+    dbconn.close()
     #debug print "Hystereis status:",in_hysteresis
 
     # > target+heat_tolerance+hysteresis //We're too warm, let's try to cool down
