@@ -14,6 +14,7 @@
 
 # variable definitions
 import datetime
+import time
 import sys
 from time import sleep
 import RPi.GPIO as GPIO
