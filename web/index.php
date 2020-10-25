@@ -26,7 +26,7 @@ switch ($setwhat) {
 </head>
 <nav id="nav-wrap">
 
-	<div id="menu-icon">RaspberryPi Thermostat</div>
+        <div id="menu-icon">RaspberryPi Thermostat</div>
 
 <p>
 <?php
@@ -39,6 +39,10 @@ switch ($setwhat) {
      exec("/home/pi/thermostat/setoccupied.sh");
      echo "OCCUPIED<br />";
      break;
+   case "wl":
+     exec("/home/pi/thermostat/setwl.sh");
+     echo "WarmerLonger<br />";
+     break;
    case "hot":
      exec("/home/pi/thermostat/sethot.sh");
      echo "Hot<br />";
@@ -49,7 +53,7 @@ switch ($setwhat) {
      break;
    case "up":
      echo "UP<br />";
-    // insert code for up 
+    // insert code for up
      break;
    case "down":
      echo "DOWN<br />";
@@ -61,23 +65,24 @@ switch ($setwhat) {
 $tempfile = file("/sys/bus/w1/devices/28-0000055d5974/w1_slave");
 $tempsplit = (split('t=',$tempfile[1])[1]);
 // echo print_r($tempsplit)."<br />";
-$tempC = $tempsplit / 1000;
+$tempC = $tempsplit / 1000 - 1.2;
 echo $tempC."C<br />";
 $tempF = ($tempC * 1.8 + 32);
 echo $tempF."F";
 ?>
 </p>
-	<ul id="nav">
-		<li><a href="?set=back">Set-back</a></li>
-		<li><a href="?set=occupied">Set Occupied</a></li>
-<!--		<li><a href="?set=up">TEMP UP</a></li>
-		<li><a href="?set=down">TEMP DOWN</a></li>//-->
-		<li><a href="hour.png">Last Hour</a></li>
-		<li><a href="day.png">Last Day</a></li>
-		<li><a href="week.png">Last Week</a></li>
-		<li><a href="?set=hot">Set HOT Mode</a></li>
-		<li><a href="?set=vaca">Set Vacation Mode</a></li>
-	</ul>
+        <ul id="nav">
+                <li><a href="?set=back">Set-back</a></li>
+                <li><a href="?set=occupied">Set Occupied</a></li>
+<!--            <li><a href="?set=up">TEMP UP</a></li>
+                <li><a href="?set=down">TEMP DOWN</a></li>//-->
+                <li><a href="hour.png">Last Hour</a></li>
+                <li><a href="day.png">Last Day</a></li>
+                <li><a href="week.png">Last Week</a></li>
+                <li><a href="?set=wl">Set WarmerLonger Mode</a></li>
+                <li><a href="?set=hot">Set HOT Mode</a></li>
+                <li><a href="?set=vaca">Set Vacation Mode</a></li>
+        </ul>
 </nav>
 </body>
 </html>
