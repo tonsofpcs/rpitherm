@@ -242,10 +242,10 @@ def act_temp():
     # write 1 to GPO(LED3) // hold-off
     print "[",datetime.datetime.now(),"] Status: Hold-off."
     db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 0);")
-    return("hysteresis")
-    
     dbconn.commit()
     dbconn.close()
+    return("hysteresis")
+  
 
 
 first_runtime()
