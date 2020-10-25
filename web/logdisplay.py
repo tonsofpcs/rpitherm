@@ -48,10 +48,10 @@ def moving_average(x, n, type='simple'):
     return a
 
 print "defining statuses"
-statuses = { "WARMING"    : 70.8,
-             "COOLING"    : 69.2,
-             "At target." : 70.0,
-             "Hold-off."  : 70.2
+statuses = { 1    : 70.8, #warming
+             2    : 69.2, #cooling
+             3    : 70.0, #at target
+             0    : 70.2  #Hold-off
            }
 
 print "setting log source"
