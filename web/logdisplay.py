@@ -4,8 +4,12 @@
 # 2014-04-13                          #
 # Eric Adler                          #
 #######################################
+
+sqlite_database = "../main/thermo.sqlite"
+
 print "importing"
 from datetime import datetime, timedelta
+import time
 
 from scipy import signal
 import numpy as np
@@ -64,16 +68,18 @@ print "opening log file"
 logfile = open(log_source, 'r')
 
 print "setting plot times"
-logdataend    = datetime.now()
-logdatastart  = logdataend - timedelta(days=8)
-logdatastart2 = logdataend - timedelta(hours=28)
-logdatastart3 = logdataend - timedelta(hours=2)
-print "Start of chart: ", logdatastart
-print "Start of chart2:", logdatastart2
-print "Start of chart3:", logdatastart3
-print "End of chart:   ", logdataend
+logdataend    = int(time.time())
+logdatastart  = logdataend - 691200  #8 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute
+logdatastart2 = logdataend - 100800  #28 hours * 60 minutes/hour * 60 seconds/minute
+logdatastart3 = logdataend - 7200    #2 hours * 60 minutes/hour * 60 seconds/minute
+print "Start of chart: ", datetime.utcfromtimestamp(logdatastart).strftime('%Y-%m-%d %H:%M:%S')
+print "Start of chart2:", datetime.utcfromtimestamp(logdatastart2).strftime('%Y-%m-%d %H:%M:%S')
+print "Start of chart3:", datetime.utcfromtimestamp(logdatastart3).strftime('%Y-%m-%d %H:%M:%S')
+print "End of chart:   ", datetime.utcfromtimestamp(logdataend).strftime('%Y-%m-%d %H:%M:%S')
 
-print "reading log file"
+print "reading log database"
+dbconn = sqlite3.connect(sqlite_database)
+db = dbconn.cursor()
 for line in logfile:
   logyear  = int(line[2:6])
   logmonth = int(line[7:9])
@@ -83,11 +89,11 @@ for line in logfile:
   logsec   = int(line[19:21])
   logdataitemdate = datetime(logyear, logmonth, logday,
                              loghr,   logmin,   logsec)
+
   if logdataitemdate >= logdatastart:
     if line[31:34] == 'AVG':
       logdata_avg.append([logdataitemdate, float(line[37:43])])
     elif line[31:37] == "Status":
-      logdata_status.append([logdataitemdate, statuses[line[39:-1]]])
     elif line[31:37] == "Target":
       target = float(line[40:44])
       hightarget = target + float(line[61:64])
@@ -97,10 +103,28 @@ for line in logfile:
       logdata_target_high.append([logdataitemdate, hightarget])
       logdata_target_low.append([logdataitemdate, lowtarget])
 
+db.execute("SELECT * FROM temp_log WHERE datetime >= " + logdatastart + ";")
+      # VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");"
+lines = db.fetchall()
+for line in lines:
+  logdata_avg.append(line[0], float(line[1])) #datetime, number
+
+db.execute("SELECT * FROM target_log WHERE datetime >= " + logdatastart + ";")
+      # VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
+lines = db.fetchall()
+for line in lines:
+  logdata_target.append(line[0], float(line[1]))       #datetime, target
+  logdata_target_high.append(line[0], float(line[2]))  #datetime, hightarget
+  logdata_target_low.append(line[0], float(line[3]))   #datetime, lowtarget
+
+db.execute("SELECT * FROM status_log WHERE datetime >= " + logdatastart + ";")
+lines = db.fetchall()
+for line in lines:
+  logdata_status.append(line[0], statuses[line[1]]))   #datetime, status
+
 print "Log data loaded"
-logfile.close()
-logdata = ''
-print "log file closed"
+dbconn.close()
+print "log database closed"
 
 if len(logdata_status) == 0:
   raise Exception('Status array empty.')
