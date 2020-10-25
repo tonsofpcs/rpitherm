@@ -110,8 +110,24 @@ print "log database closed"
 if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
+print "Converting date formats"
+logdata_avg_dates = [mdates.date2num(dt.datetime.fromtimestamp(item[0])) for item in logdata_avg]
+logdata_avg_values = [item[1] for item in logdata_avg]
+
+logdata_target_dates = [mdates.date2num(dt.datetime.fromtimestamp(item[0])) for item in logdata_target]
+logdata_target_values = [item[1] for item in logdata_target]
+
+logdata_target_high_dates = [mdates.date2num(dt.datetime.fromtimestamp(item[0])) for item in logdata_target_high]
+logdata_target_high_values = [item[1] for item in logdata_target_high]
+
+logdata_target_low_dates = [mdates.date2num(dt.datetime.fromtimestamp(item[0])) for item in logdata_target_low]
+logdata_target_low_values = [item[1] for item in logdata_target_low]
+
+logdata_status_dates = [mdates.date2num(dt.datetime.fromtimestamp(item[0])) for item in logdata_status]
+logdata_status_values = [item[1] for item in logdata_status]
+
 print "handling data"
-array_avg = np.array(logdata_avg)
+array_avg = np.array(logdata_avg_dates, logdata_avg_values)
 print "Avg array built"
 try:
   array_avg_y = moving_average(array_avg[:,1], 1500)
@@ -120,11 +136,11 @@ except:
   arravg_len = len(array_avg)
   array_avg_y = moving_average(array_avg[:,1], arravg_len-1) 
   print "Moving avg {0} array built".format(arravg_len)
-array_status = np.array(logdata_status)
+array_status = np.array(logdata_status_dates, logdata_status_values)
 print "Status array built"
-array_upperbound = np.array(logdata_target_high)
+array_upperbound = np.array(logdata_target_high_dates, logdata_target_high_values)
 print "upper bound array built"
-array_lowerbound = np.array(logdata_target_low)
+array_lowerbound = np.array(logdata_target_low_dates, logdata_target_high_values)
 print "lower bound array built"
 
 fig, ax = plt.subplots()
