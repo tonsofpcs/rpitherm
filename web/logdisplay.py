@@ -84,13 +84,13 @@ print "reading log database"
 dbconn = sqlite3.connect(sqlite_database)
 db = dbconn.cursor()
 
-db.execute("SELECT * FROM temp_log WHERE datetime >= " + logdatastart + ";")
+db.execute("SELECT * FROM temp_log WHERE datetime >= " + str(logdatastart) + ";")
       # VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");"
 lines = db.fetchall()
 for line in lines:
   logdata_avg.append(line[0], float(line[1])) #datetime, number
 
-db.execute("SELECT * FROM target_log WHERE datetime >= " + logdatastart + ";")
+db.execute("SELECT * FROM target_log WHERE datetime >= " + str(logdatastart) + ";")
       # VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
 lines = db.fetchall()
 for line in lines:
@@ -98,7 +98,7 @@ for line in lines:
   logdata_target_high.append(line[0], float(line[2]))  #datetime, hightarget
   logdata_target_low.append(line[0], float(line[3]))   #datetime, lowtarget
 
-db.execute("SELECT * FROM status_log WHERE datetime >= " + logdatastart + ";")
+db.execute("SELECT * FROM status_log WHERE datetime >= " + str(logdatastart) + ";")
 lines = db.fetchall()
 for line in lines:
   logdata_status.append(line[0], statuses[line[1]])   #datetime, status
