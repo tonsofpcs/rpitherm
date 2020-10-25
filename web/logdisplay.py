@@ -10,7 +10,7 @@ sqlite_database = "../main/thermo.sqlite"
 
 print "importing"
 from datetime import datetime, timedelta
-import time
+from time import time
 
 from scipy import signal
 import numpy as np
@@ -20,12 +20,12 @@ import sqlite3
 import matplotlib as mpl
 mpl.use('Agg')
 print "importing ."
-import matplotlib.colors as colors
-print "importing . ."
+#import matplotlib.colors as colors
+#print "importing . ."
 import matplotlib.dates as mdates
 print "importing . ."
-import matplotlib.mlab as mlab
-print "importing . . ."
+#import matplotlib.mlab as mlab
+#print "importing . . ."
 import matplotlib.pyplot as plt
 print "importing . . . ."
 import matplotlib.transforms as mtransforms
@@ -71,7 +71,7 @@ print "opening log file"
 logfile = open(log_source, 'r')
 
 print "setting plot times"
-logdataend    = int(time.time())
+logdataend    = int(time())
 logdatastart  = logdataend - 691200  #8 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute
 logdatastart2 = logdataend - 100800  #28 hours * 60 minutes/hour * 60 seconds/minute
 logdatastart3 = logdataend - 7200    #2 hours * 60 minutes/hour * 60 seconds/minute
@@ -89,13 +89,13 @@ dbconn = sqlite3.connect(sqlite_database)
 db = dbconn.cursor()
 
 db.execute("SELECT * FROM temp_log WHERE datetime >= " + str(logdatastart) + ";")
-      # VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");"
+      # VALUES (" + str(int(time())) + "," + str(comp_temp) +");"
 lines = db.fetchall()
 for line in lines:
   logdata_avg.append([line[0], float(line[1])]) #datetime, number
 
 db.execute("SELECT * FROM target_log WHERE datetime >= " + str(logdatastart) + ";")
-      # VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
+      # VALUES (" + str(int(time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
 lines = db.fetchall()
 for line in lines:
 #  logdata_target.append([line[0], float(line[1])])       #datetime, target
