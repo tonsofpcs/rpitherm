@@ -137,6 +137,9 @@ except:
   array_avg_y = moving_average(array_avg[:,1], arravg_len-1) 
   print "Moving avg {0} array built".format(arravg_len)
 array_status = np.array((logdata_status_dates, logdata_status_values))
+print array_status
+array_status = np.array(logdata_status)
+print array_status
 print "Status array built"
 array_upperbound = np.array((logdata_target_high_dates, logdata_target_high_values))
 print "upper bound array built"
