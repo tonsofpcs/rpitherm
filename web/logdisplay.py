@@ -75,10 +75,10 @@ logdataend    = int(time.time())
 logdatastart  = logdataend - 691200  #8 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute
 logdatastart2 = logdataend - 100800  #28 hours * 60 minutes/hour * 60 seconds/minute
 logdatastart3 = logdataend - 7200    #2 hours * 60 minutes/hour * 60 seconds/minute
-dt_logdatastart = datetime.utcfromtimestamp(logdatastart)
-dt_logdatastart2 = datetime.utcfromtimestamp(logdatastart2)
-dt_logdatastart3 = datetime.utcfromtimestamp(logdatastart3)
-dt_logdataend = datetime.utcfromtimestamp(logdataend)
+dt_logdatastart = datetime.fromtimestamp(logdatastart)
+dt_logdatastart2 = datetime.fromtimestamp(logdatastart2)
+dt_logdatastart3 = datetime.fromtimestamp(logdatastart3)
+dt_logdataend = datetime.fromtimestamp(logdataend)
 print "Start of chart: ", dt_logdatastart.strftime('%Y-%m-%d %H:%M:%S')
 print "Start of chart2:", dt_logdatastart2.strftime('%Y-%m-%d %H:%M:%S')
 print "Start of chart3:", dt_logdatastart3.strftime('%Y-%m-%d %H:%M:%S')
@@ -206,8 +206,8 @@ print "plotted lowerbound array"
 ax.set_xlim(dt_logdatastart,dt_logdataend)
 ax.set_ylim(55,90)
 
-ax.format_xdata = mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f')
-#ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f'))
+#ax.format_xdata = mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f')
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f'))
 ax.grid(True)
 
 fig.autofmt_xdate()
