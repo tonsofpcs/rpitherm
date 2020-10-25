@@ -99,7 +99,7 @@ for line in lines:
 db.execute("SELECT * FROM status_log WHERE datetime >= " + logdatastart + ";")
 lines = db.fetchall()
 for line in lines:
-  logdata_status.append(line[0], statuses[line[1]]))   #datetime, status
+  logdata_status.append(line[0], statuses[line[1]])   #datetime, status
 
 print "Log data loaded"
 dbconn.close()
