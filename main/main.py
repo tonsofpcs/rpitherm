@@ -175,15 +175,15 @@ def act_temp():
     
     targethigh = target_temp + heat_tolerance
     targetlow = target_temp - cool_tolerance
-
+    
     dbconn = sqlite3.connect(sqlite_database)
     db = dbconn.cursor()
-
+    
     db.execute("INSERT INTO target_log VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");")
     db.execute("INSERT INTO temp_log VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");")
-
+    
     #debug print "Hystereis status:",in_hysteresis
-
+    
     # > target+heat_tolerance+hysteresis //We're too warm, let's try to cool down
     #debug print "compare temp with [>] ",(target_temp + heat_tolerance + (hysteresis * in_hysteresis))
     if (comp_temp > (targethigh + (hysteresis * in_hysteresis))):
@@ -211,7 +211,7 @@ def act_temp():
         print "[",datetime.datetime.now(),"] Status: WARMING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 1);")
         return("warm")
-
+    
     # <= target+heat_tolerance && >= target+cool_tolerance // temperature's good! Stop adjusting.
     #debug print "compare temp with [<=] ",(target_temp + heat_tolerance)," [>=] ", (target_temp - cool_tolerance)
     if ((comp_temp <= (targethigh)) and (comp_temp >= (targetlow))):
@@ -237,7 +237,7 @@ def act_temp():
     print "[",datetime.datetime.now(),"] Status: Hold-off."
     db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 0);")
     return("hysteresis")
-
+    
     dbconn.commit()
     dbconn.close()
 
