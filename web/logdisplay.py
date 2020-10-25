@@ -81,28 +81,6 @@ print "End of chart:   ", datetime.utcfromtimestamp(logdataend).strftime('%Y-%m-
 print "reading log database"
 dbconn = sqlite3.connect(sqlite_database)
 db = dbconn.cursor()
-for line in logfile:
-  logyear  = int(line[2:6])
-  logmonth = int(line[7:9])
-  logday   = int(line[10:12])
-  loghr    = int(line[13:15])
-  logmin   = int(line[16:18])
-  logsec   = int(line[19:21])
-  logdataitemdate = datetime(logyear, logmonth, logday,
-                             loghr,   logmin,   logsec)
-
-  if logdataitemdate >= logdatastart:
-    if line[31:34] == 'AVG':
-      logdata_avg.append([logdataitemdate, float(line[37:43])])
-    elif line[31:37] == "Status":
-    elif line[31:37] == "Target":
-      target = float(line[40:44])
-      hightarget = target + float(line[61:64])
-      lowtarget  = target - float(line[68:71])
-
-      logdata_target.append([logdataitemdate, target])
-      logdata_target_high.append([logdataitemdate, hightarget])
-      logdata_target_low.append([logdataitemdate, lowtarget])
 
 db.execute("SELECT * FROM temp_log WHERE datetime >= " + logdatastart + ";")
       # VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");"
