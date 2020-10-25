@@ -13,7 +13,7 @@
 # log anything written to std-out and std-err
 
 # variable definitions
-from datetime import datetime
+import datetime
 import sys
 from time import time
 from time import sleep
@@ -73,7 +73,7 @@ def read_cfg():
         rfile.close()
         rcfg_data = rcfg.split(",")
         target_temp = float(rcfg_data[0])
-    print "[",datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
+    print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     sys.stdout.flush()
 
 
@@ -89,7 +89,7 @@ def read_speeds():
     adjust_rate = int(scfg_data[1])
     sample_rate = int(scfg_data[2])
     LCM_rates = act_rate * adjust_rate * sample_rate
-    print "[",datetime.now(),"] Act every ",act_rate*100,"ms, Adjust every ",adjust_rate*100,"ms, Sample every ",sample_rate*100,"ms, Reset counter every ",LCM_rates*100,"ms"
+    print "[",datetime.datetime.now(),"] Act every ",act_rate*100,"ms, Adjust every ",adjust_rate*100,"ms, Sample every ",sample_rate*100,"ms, Reset counter every ",LCM_rates*100,"ms"
     sys.stdout.flush()
 
 
@@ -118,13 +118,13 @@ def first_runtime():
     GPIO.output(gpo_hold, GPIO.LOW)
     
     # Write "Initializing..." to std-out
-    print "[",datetime.now(),"] Initializing..."
+    print "[",datetime.datetime.now(),"] Initializing..."
     sys.stdout.flush()
     
     for x in range (0, 10):
         newtemp = get_temp_F()
         current_temp.append(newtemp)
-        print "[",datetime.now(),"] Temp reading for ",x,": ",newtemp
+        print "[",datetime.datetime.now(),"] Temp reading for ",x,": ",newtemp
         sys.stdout.flush()
     
     read_cfg()
@@ -138,7 +138,7 @@ def main_loop():
         
         if (iterator % sample_rate)==0:
             newtemp = get_temp_F()
-#            print "[",datetime.now(),"] Temp reading: ",newtemp
+#            print "[",datetime.datetime.now(),"] Temp reading: ",newtemp
 #            sys.stdout.flush()
             if (newtemp == 185.0):
                current_temp.append(current_temp[-1])
@@ -155,7 +155,7 @@ def main_loop():
         
         if (iterator == LCM_rates):
             iterator = 0
-            print "[",datetime.now(),"] reset iterator"
+            print "[",datetime.datetime.now(),"] reset iterator"
 
 
 def act_temp():
@@ -164,10 +164,10 @@ def act_temp():
     comp_temp = sum(current_temp)/len(current_temp)
     max_temp = max(current_temp)
     # write AVG and variables(target,heat_tolerance,cool_tolerance) to std-err as "Temp AVG: %d; Target: %d; Tolerances: +%u,-%u".
-    print "[",datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
+    print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     
-    print "[",datetime.now(),"] AVG: ",comp_temp
-    print "[",datetime.now(),"] MAX: ",max_temp
+    print "[",datetime.datetime.now(),"] AVG: ",comp_temp
+    print "[",datetime.datetime.now(),"] MAX: ",max_temp
     sys.stdout.flush()
 
     #CREATE TABLE target_log(datetime INTEGER PRIMARY KEY, target DECIMAL(4,1), targethigh DECIMAL(4,1), targetlow DECIMAL(4,1), hysteresis DECIMAL(4,1));
@@ -193,7 +193,7 @@ def act_temp():
         GPIO.output(gpo_cool, GPIO.HIGH)
 	in_hysteresis = 0
         # write 1 to GPO(relay2) // cool
-        print "[",datetime.now(),"] Status: COOLING"
+        print "[",datetime.datetime.now(),"] Status: COOLING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 2);")
         dbconn.commit()
         return("cool")
@@ -208,7 +208,7 @@ def act_temp():
         GPIO.output(gpo_heat, GPIO.HIGH)
 	in_hysteresis = 0
         # write 1 to GPO(relay1) // heat
-        print "[",datetime.now(),"] Status: WARMING"
+        print "[",datetime.datetime.now(),"] Status: WARMING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 1);")
         dbconn.commit()
         return("warm")
@@ -223,7 +223,7 @@ def act_temp():
         GPIO.output(gpo_hold, GPIO.LOW)
 	in_hysteresis = 1
         # write 1 to GPO(LED1) // at target
-        print "[",datetime.now(),"] Status: At target."
+        print "[",datetime.datetime.now(),"] Status: At target."
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 3);")
         dbconn.commit()
         return("at target")
@@ -236,7 +236,7 @@ def act_temp():
     GPIO.output(gpo_warn, GPIO.LOW)
     GPIO.output(gpo_hold, GPIO.HIGH)
     # write 1 to GPO(LED3) // hold-off
-    print "[",datetime.now(),"] Status: Hold-off."
+    print "[",datetime.datetime.now(),"] Status: Hold-off."
     db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 0);")
     dbconn.commit()
     return("hysteresis")
