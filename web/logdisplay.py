@@ -111,19 +111,19 @@ if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
 print "Converting date formats"
-logdata_avg_dates = [mdates.date2num(datetime.datetime.fromtimestamp(item[0])) for item in logdata_avg]
+logdata_avg_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_avg]
 logdata_avg_values = [item[1] for item in logdata_avg]
 
-logdata_target_dates = [mdates.date2num(datetime.datetime.fromtimestamp(item[0])) for item in logdata_target]
+logdata_target_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target]
 logdata_target_values = [item[1] for item in logdata_target]
 
-logdata_target_high_dates = [mdates.date2num(datetime.datetime.fromtimestamp(item[0])) for item in logdata_target_high]
+logdata_target_high_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target_high]
 logdata_target_high_values = [item[1] for item in logdata_target_high]
 
-logdata_target_low_dates = [mdates.date2num(datetime.datetime.fromtimestamp(item[0])) for item in logdata_target_low]
+logdata_target_low_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target_low]
 logdata_target_low_values = [item[1] for item in logdata_target_low]
 
-logdata_status_dates = [mdates.date2num(datetime.datetime.fromtimestamp(item[0])) for item in logdata_status]
+logdata_status_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_status]
 logdata_status_values = [item[1] for item in logdata_status]
 
 print "handling data"
