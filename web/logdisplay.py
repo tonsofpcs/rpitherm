@@ -94,7 +94,7 @@ db.execute("SELECT * FROM target_log WHERE datetime >= " + str(logdatastart) + "
       # VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
 lines = db.fetchall()
 for line in lines:
-  logdata_target.append([line[0], float(line[1])])       #datetime, target
+#  logdata_target.append([line[0], float(line[1])])       #datetime, target
   logdata_target_high.append([line[0], float(line[2])])  #datetime, hightarget
   logdata_target_low.append([line[0], float(line[3])])   #datetime, lowtarget
 
@@ -111,23 +111,18 @@ if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
 print "Converting date formats"
-logdata_avg_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_avg]
-logdata_avg_values = [item[1] for item in logdata_avg]
+logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_avg]
 
-logdata_target_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target]
-logdata_target_values = [item[1] for item in logdata_target]
+#logdata_target_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target]
 
-logdata_target_high_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target_high]
-logdata_target_high_values = [item[1] for item in logdata_target_high]
+logdata_target_high_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target_high]
 
-logdata_target_low_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_target_low]
-logdata_target_low_values = [item[1] for item in logdata_target_low]
+logdata_target_low_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target_low]
 
-logdata_status_dates = [mdates.date2num(datetime.fromtimestamp(item[0])) for item in logdata_status]
-logdata_status_values = [item[1] for item in logdata_status]
+logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
 print "handling data"
-array_avg = np.array((logdata_avg_dates, logdata_avg_values))
+array_avg = np.array(logdata_avg_dates)
 print "Avg array built"
 try:
   array_avg_y = moving_average(array_avg[:,1], 1500)
@@ -136,14 +131,11 @@ except:
   arravg_len = len(array_avg)
   array_avg_y = moving_average(array_avg[:,1], arravg_len-1) 
   print "Moving avg {0} array built".format(arravg_len)
-array_status = np.array((logdata_status_dates, logdata_status_values))
-print array_status
-array_status = np.array(logdata_status)
-print array_status
+array_status = np.array(logdata_status_dates)
 print "Status array built"
-array_upperbound = np.array((logdata_target_high_dates, logdata_target_high_values))
+array_upperbound = np.array(logdata_target_high_dates)
 print "upper bound array built"
-array_lowerbound = np.array((logdata_target_low_dates, logdata_target_high_values))
+array_lowerbound = np.array(logdata_target_low_dates)
 print "lower bound array built"
 
 fig, ax = plt.subplots()
