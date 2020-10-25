@@ -196,6 +196,8 @@ def act_temp():
         # write 1 to GPO(relay2) // cool
         print "[",datetime.datetime.now(),"] Status: COOLING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 2);")
+        dbconn.commit()
+        dbconn.close()
         return("cool")
     
     # < target-cool_tolerance-hysteresis  //We're too cold, let's try to warm up
@@ -210,6 +212,8 @@ def act_temp():
         # write 1 to GPO(relay1) // heat
         print "[",datetime.datetime.now(),"] Status: WARMING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 1);")
+        dbconn.commit()
+        dbconn.close()
         return("warm")
     
     # <= target+heat_tolerance && >= target+cool_tolerance // temperature's good! Stop adjusting.
@@ -224,6 +228,8 @@ def act_temp():
         # write 1 to GPO(LED1) // at target
         print "[",datetime.datetime.now(),"] Status: At target."
         db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 3);")
+        dbconn.commit()
+        dbconn.close()
         return("at target")
         
     #debug print "ELSE"
