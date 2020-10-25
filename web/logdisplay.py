@@ -8,7 +8,7 @@
 
 sqlite_database = "../main/thermo.sqlite"
 
-print "importing"
+#print "importing"
 from datetime import datetime, timedelta
 from time import time
 
@@ -19,18 +19,18 @@ import sqlite3
 
 import matplotlib as mpl
 mpl.use('Agg')
-print "importing ."
+#print "importing ."
 #import matplotlib.colors as colors
-#print "importing . ."
+##print "importing . ."
 import matplotlib.dates as mdates
-print "importing . ."
+#print "importing . ."
 #import matplotlib.mlab as mlab
-#print "importing . . ."
+##print "importing . . ."
 import matplotlib.pyplot as plt
-print "importing . . . ."
+#print "importing . . . ."
 import matplotlib.transforms as mtransforms
 
-print "done importing"
+#print "done importing"
 
 def moving_average(x, n, type='simple'):
     """
@@ -50,14 +50,14 @@ def moving_average(x, n, type='simple'):
     a[:n] = a[n]
     return a
 
-print "defining statuses"
+#print "defining statuses"
 statuses = { 1    : 70.8, #warming
              2    : 69.2, #cooling
              3    : 70.0, #at target
              0    : 70.2  #Hold-off
            }
 
-print "setting log source"
+#print "setting log source"
 log_source = "../examples/newsample.log"
 
 logdata_avg         = []
@@ -67,10 +67,10 @@ logdata_target_low  = []
 logdata_status      = []
 logdataitem         = []
 
-print "opening log file"
+#print "opening log file"
 logfile = open(log_source, 'r')
 
-print "setting plot times"
+#print "setting plot times"
 logdataend    = int(time())
 logdatastart  = logdataend - 691200  #8 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute
 logdatastart2 = logdataend - 100800  #28 hours * 60 minutes/hour * 60 seconds/minute
@@ -79,12 +79,12 @@ dt_logdatastart = datetime.fromtimestamp(logdatastart)
 dt_logdatastart2 = datetime.fromtimestamp(logdatastart2)
 dt_logdatastart3 = datetime.fromtimestamp(logdatastart3)
 dt_logdataend = datetime.fromtimestamp(logdataend)
-print "Start of chart: ", dt_logdatastart.strftime('%Y-%m-%d %H:%M:%S')
-print "Start of chart2:", dt_logdatastart2.strftime('%Y-%m-%d %H:%M:%S')
-print "Start of chart3:", dt_logdatastart3.strftime('%Y-%m-%d %H:%M:%S')
-print "End of chart:   ", dt_logdataend.strftime('%Y-%m-%d %H:%M:%S')
+#print "Start of chart: ", dt_logdatastart.strftime('%Y-%m-%d %H:%M:%S')
+#print "Start of chart2:", dt_logdatastart2.strftime('%Y-%m-%d %H:%M:%S')
+#print "Start of chart3:", dt_logdatastart3.strftime('%Y-%m-%d %H:%M:%S')
+#print "End of chart:   ", dt_logdataend.strftime('%Y-%m-%d %H:%M:%S')
 
-print "reading log database"
+#print "reading log database"
 dbconn = sqlite3.connect(sqlite_database)
 db = dbconn.cursor()
 
@@ -107,14 +107,14 @@ lines = db.fetchall()
 for line in lines:
   logdata_status.append([line[0], statuses[line[1]]])   #datetime, status
 
-print "Log data loaded"
+#print "Log data loaded"
 dbconn.close()
-print "log database closed"
+#print "log database closed"
 
 if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
-print "Converting date formats"
+#print "Converting date formats"
 logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_avg]
 
 #logdata_target_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target]
@@ -125,22 +125,22 @@ logdata_target_low_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), i
 
 logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
-print "handling data"
+#print "handling data"
 array_avg = np.array(logdata_avg_dates)
-print "Avg array built"
+#print "Avg array built"
 try:
   array_avg_y = moving_average(array_avg[:,1], 1500)
-  print "Moving avg 1500 array built"
+  #print "Moving avg 1500 array built"
 except:
   arravg_len = len(array_avg)
   array_avg_y = moving_average(array_avg[:,1], arravg_len-1) 
-  print "Moving avg {0} array built".format(arravg_len)
+  #print "Moving avg {0} array built".format(arravg_len)
 array_status = np.array(logdata_status_dates)
-print "Status array built"
+#print "Status array built"
 array_upperbound = np.array(logdata_target_high_dates)
-print "upper bound array built"
+#print "upper bound array built"
 array_lowerbound = np.array(logdata_target_low_dates)
-print "lower bound array built"
+#print "lower bound array built"
 
 fig, ax = plt.subplots()
 
@@ -177,31 +177,31 @@ ax.fill_between(arr_status_strs, -1, 101,
                 alpha=0.2, 
                 transform=trans)
 
-print "plotted status array"
+#print "plotted status array"
 
 ax.plot(array_avg[:,0], 
         array_avg[:,1], 
         'b', 
         lw=1)
-print "plotted avg array"
+#print "plotted avg array"
 
 ax.plot(array_avg[:,0], 
         array_avg_y, 
         'r', 
         lw=1)
-print "plotted moving average ({0}) array".format(len(array_avg_y))
+#print "plotted moving average ({0}) array".format(len(array_avg_y))
 
 ax.plot(array_upperbound[:,0], 
         array_upperbound[:,1], 
         'k', 
         lw=1)
-print "plotted upperbound array"
+#print "plotted upperbound array"
 
 ax.plot(array_lowerbound[:,0], 
         array_lowerbound[:,1], 
         'k', 
         lw=1)
-print "plotted lowerbound array"
+#print "plotted lowerbound array"
 
 ax.set_xlim(dt_logdatastart,dt_logdataend)
 ax.set_ylim(55,90)
@@ -212,23 +212,23 @@ ax.grid(True)
 
 fig.autofmt_xdate()
 
-print "formatting set, saving file..."
+#print "formatting set, saving file..."
 
 plt.savefig('../week.png')
 
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-print "saving file2..."
+#print "saving file2..."
 ax.set_xlim(dt_logdatastart2,dt_logdataend)
 plt.savefig('../day.png')
 
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
 
-print "saving file3..."
+#print "saving file3..."
 ax.set_xlim(dt_logdatastart3,dt_logdataend)
 plt.savefig('../hour.png')
 
-print "done!"
+#print "done!"
 
 
 quit()
