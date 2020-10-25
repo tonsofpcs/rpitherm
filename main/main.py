@@ -4,6 +4,7 @@
 # modified 2014-03-19                         #
 # modified 2019-07-18                         #
 # modified 2020-10-24                         #
+# modified 2020-10-25                         #
 # Thermostatic control of energy consumption  #
 # ## Python for Raspberry Pi     ##           #
 # Eric Adler   <tonsofpcs@gmail.com>          #
