@@ -181,8 +181,6 @@ def act_temp():
 
     db.execute("INSERT INTO target_log VALUES (" + str(int(time.time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");")
     db.execute("INSERT INTO temp_log VALUES (" + str(int(time.time())) + "," + str(comp_temp) +");")
-    dbconn.commit()
-    dbconn.close()
 
     #debug print "Hystereis status:",in_hysteresis
 
@@ -239,6 +237,10 @@ def act_temp():
     print "[",datetime.datetime.now(),"] Status: Hold-off."
     db.execute("INSERT INTO status_log VALUES (" + str(int(time.time())) + ", 0);")
     return("hysteresis")
+
+    dbconn.commit()
+    dbconn.close()
+
 
 first_runtime()
 main_loop()
