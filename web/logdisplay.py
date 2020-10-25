@@ -15,6 +15,8 @@ import time
 from scipy import signal
 import numpy as np
 
+import sqlite3
+
 import matplotlib as mpl
 mpl.use('Agg')
 print "importing ."
