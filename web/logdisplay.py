@@ -214,15 +214,15 @@ fig.autofmt_xdate()
 
 print "formatting set, saving file..."
 
-plt.savefig('../week.png', dpi=50)
+plt.savefig('../week.png')
 
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
 print "saving file2..."
 ax.set_xlim(dt_logdatastart2,dt_logdataend)
 plt.savefig('../day.png')
 
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S.%f'))
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
 
 print "saving file3..."
 ax.set_xlim(dt_logdatastart3,dt_logdataend)
