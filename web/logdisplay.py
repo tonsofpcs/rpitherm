@@ -202,8 +202,8 @@ print "plotted lowerbound array"
 ax.set_xlim(logdatastart,logdataend)
 ax.set_ylim(55,90)
 
-#ax.format_xdata = mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f')
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f'))
+ax.format_xdata = mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f')
+#ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f'))
 ax.grid(True)
 
 fig.autofmt_xdate()
