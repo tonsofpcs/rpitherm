@@ -75,10 +75,14 @@ logdataend    = int(time.time())
 logdatastart  = logdataend - 691200  #8 days * 24 hours/day * 60 minutes/hour * 60 seconds/minute
 logdatastart2 = logdataend - 100800  #28 hours * 60 minutes/hour * 60 seconds/minute
 logdatastart3 = logdataend - 7200    #2 hours * 60 minutes/hour * 60 seconds/minute
-print "Start of chart: ", datetime.utcfromtimestamp(logdatastart).strftime('%Y-%m-%d %H:%M:%S')
-print "Start of chart2:", datetime.utcfromtimestamp(logdatastart2).strftime('%Y-%m-%d %H:%M:%S')
-print "Start of chart3:", datetime.utcfromtimestamp(logdatastart3).strftime('%Y-%m-%d %H:%M:%S')
-print "End of chart:   ", datetime.utcfromtimestamp(logdataend).strftime('%Y-%m-%d %H:%M:%S')
+dt_logdatastart = datetime.utcfromtimestamp(logdatastart)
+dt_logdatastart2 = datetime.utcfromtimestamp(logdatastart2)
+dt_logdatastart3 = datetime.utcfromtimestamp(logdatastart3)
+dt_logdataend = datetime.utcfromtimestamp(logdataend)
+print "Start of chart: ", dt_logdatastart.strftime('%Y-%m-%d %H:%M:%S')
+print "Start of chart2:", dt_logdatastart2.strftime('%Y-%m-%d %H:%M:%S')
+print "Start of chart3:", dt_logdatastart3.strftime('%Y-%m-%d %H:%M:%S')
+print "End of chart:   ", dt_logdataend.strftime('%Y-%m-%d %H:%M:%S')
 
 print "reading log database"
 dbconn = sqlite3.connect(sqlite_database)
@@ -199,7 +203,7 @@ ax.plot(array_lowerbound[:,0],
         lw=1)
 print "plotted lowerbound array"
 
-ax.set_xlim(logdatastart,logdataend)
+ax.set_xlim(dt_logdatastart,dt_logdataend)
 ax.set_ylim(55,90)
 
 ax.format_xdata = mdates.DateFormatter('%Y-%m-%d %H:%M:%S.%f')
@@ -213,11 +217,11 @@ print "formatting set, saving file..."
 plt.savefig('../week.png', dpi=50)
 
 print "saving file2..."
-ax.set_xlim(logdatastart2,logdataend)
+ax.set_xlim(dt_logdatastart2,dt_logdataend)
 plt.savefig('../day.png')
 
 print "saving file3..."
-ax.set_xlim(logdatastart3,logdataend)
+ax.set_xlim(dt_logdatastart3,dt_logdataend)
 plt.savefig('../hour.png')
 
 print "done!"
