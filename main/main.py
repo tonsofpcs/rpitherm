@@ -21,6 +21,8 @@ import RPi.GPIO as GPIO
 import collections
 import sqlite3
 
+cfg_source = "/home/pi/thermostat/thermo.cfg"
+target_source = "/home/pi/thermostat/target.cfg"
 GPIO.setmode(GPIO.BCM)
 calib = -1.2 #temperature sensor calibration adjustment
 calib = calib * 1000
@@ -56,7 +58,6 @@ in_hysteresis = 1
 #read config
 def read_cfg():
     global target_temp,heat_tolerance,cool_tolerance,hysteresis
-    cfg_source = "/home/pi/thermostat/thermo.cfg"
     rfile = open(cfg_source)
     rcfg = rfile.read()
     rfile.close()
@@ -67,7 +68,7 @@ def read_cfg():
     cool_tolerance = float(rcfg_data[2])
     hysteresis = float(rcfg_data[3])
     if (target_temp == 0):
-        rfile = open(temp_source)
+        rfile = open(target_source)
         rcfg = rfile.read()
         rfile.close()
         rcfg_data = rcfg.split(",")
