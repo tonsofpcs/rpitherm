@@ -22,30 +22,40 @@ import RPi.GPIO as GPIO
 import collections
 import sqlite3
 
-cfg_source = "/home/pi/thermostat/thermo.cfg"
-target_source = "/home/pi/thermostat/target.cfg"
-GPIO.setmode(GPIO.BCM)
-calib = -1.2 #temperature sensor calibration adjustment
-calib = calib * 1000
-sqlite_database = "thermo.sqlite"
-target_temp = 65.0
-current_temp = collections.deque([], 10)
-heat_tolerance = 2.0
-cool_tolerance = 2.0
-hysteresis = 1.0
-iterator = 0
-act_rate = 100
-adjust_rate = 7
-sample_rate = 2
+temp_source = "/sys/bus/w1/devices/28-0000055d5974/w1_slave"   #Dallas OneWire temperature sensor location
+cfg_source = "/home/pi/thermostat/thermo.cfg"      #configuration file.  See thermo.cfg for example
+target_source = "/home/pi/thermostat/target.cfg"   #target temperature source file, used when config has 0.0 for target temp
+calib = -1.2                                       #temperature sensor calibration adjustment, in degrees C
+sqlite_database = "thermo.sqlite"                  #sqlite database for logging   TODO: configuration in sqlite
+
+#Raspberry Pi GPO configuration
+gpo_heat = 17           #heat output, to control Heating system and/or display status
+gpo_cool = 18           #cool output, to control Cooling system and/or display status
+gpo_target = 22         #"At target" status output
+gpo_hold = 23           #"Hold-off" status output
+gpo_warn = 24           #warning status output
+
+#defaults, if no config found
+target_temp = 65.0      #nominal temperature target
+heat_tolerance = 2.0    #
+cool_tolerance = 2.0    #
+hysteresis = 1.0        #
+
+#rate definitions
+act_rate = 100          #action
+adjust_rate = 7         #adjust
+sample_rate = 2         #sample
 LCM_rates = act_rate * adjust_rate * sample_rate
-gpo_heat = 17
-gpo_cool = 18
-gpo_target = 22
-gpo_hold = 23
-gpo_warn = 24
-temp_source = "/sys/bus/w1/devices/28-0000055d5974/w1_slave"
+
+current_temp = collections.deque([], 10)
+iterator = 0
+
+calib = calib * 1000    #calibration conversion to uC
+
+GPIO.setmode(GPIO.BCM)  #set GPIO mode!
+
 # relay1 - heating
-GPIO.setup(gpo_heat, GPIO.OUT) 
+GPIO.setup(gpo_heat, GPIO.OUT)
 # relay2 - cooling
 GPIO.setup(gpo_cool, GPIO.OUT)
 # LED1 - at target
@@ -54,11 +64,12 @@ GPIO.setup(gpo_target, GPIO.OUT)
 GPIO.setup(gpo_warn, GPIO.OUT) 
 # LED3 - hold-off (hysteresis)
 GPIO.setup(gpo_hold, GPIO.OUT) 
-in_hysteresis = 1
+
+in_hysteresis = 1       #preset status to hysteresis (hold-off)
 
 #read config
 def read_cfg():
-    global target_temp,heat_tolerance,cool_tolerance,hysteresis
+    global target_temp,heat_tolerance,cool_tolerance,hysteresis  #set up our stored config variables
     rfile = open(cfg_source)
     rcfg = rfile.read()
     rfile.close()
@@ -95,16 +106,16 @@ def read_speeds():
 
 
 def get_temp_F():
-    tfile = open(temp_source)
+    tfile = open(temp_source)        #dallas onewire temperature sensor appears as a file through the 1w module
     text = tfile.read()
     tfile.close()
     secondline = text.split("\n")[1]
     temperaturedata = secondline.split(" ")[9]
     temperature = float(temperaturedata[2:])
-    if ( ( temperature == 85 ) or ( temperature == -62 ) ):
-        return -80 #error reading
-    temperature = temperature + calib
-    temperature = (temperature * 1.8 + 32000) / 1000
+    if ( ( temperature == 85 ) or ( temperature == -62 ) )  #-62000 and 85000 are error returns from the sensor
+        return -80                              # error reading, -80 is outside of the range in degrees F and C
+    temperature = temperature + calib                       #calibration offset
+    temperature = (temperature * 1.8 + 32000) / 1000        #convert C to F
     return temperature
 
 def first_runtime():
