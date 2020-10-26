@@ -101,7 +101,8 @@ def get_temp_F():
     secondline = text.split("\n")[1]
     temperaturedata = secondline.split(" ")[9]
     temperature = float(temperaturedata[2:])
-    if (temperature == 85) or (temperature == -62) return -80 #error reading
+    if ((temperature == 85) or (temperature == -62))
+        return -80 #error reading
     temperature = temperature + calib
     temperature = (temperature * 1.8 + 32000) / 1000
     return temperature
