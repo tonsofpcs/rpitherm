@@ -1,3 +1,6 @@
+# rpitherm
+## sqlite setup
+
 At an sqlite prompt, to set up the database, run the following:
 
 ```
