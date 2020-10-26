@@ -152,8 +152,6 @@ def main_loop():
         
         if (iterator % sample_rate)==0:
             newtemp = get_temp_F()
-#            print "[",datetime.datetime.now(),"] Temp reading: ",newtemp
-#            sys.stdout.flush()
             if (newtemp == -80):
                current_temp.append(current_temp[-1])
             else:
@@ -184,9 +182,6 @@ def act_temp():
     print "[",datetime.datetime.now(),"] MAX: ",max_temp
     sys.stdout.flush()
 
-    #CREATE TABLE target_log(datetime INTEGER PRIMARY KEY, target DECIMAL(4,1), targethigh DECIMAL(4,1), targetlow DECIMAL(4,1), hysteresis DECIMAL(4,1));
-    #CREATE TABLE temps(datetime INTEGER PRIMARY KEY, temp DECIMAL(4,1));
-    
     targethigh = target_temp + heat_tolerance
     targetlow = target_temp - cool_tolerance
     
@@ -195,10 +190,7 @@ def act_temp():
     db.execute("INSERT INTO target_log VALUES (" + str(int(time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");")
     db.execute("INSERT INTO temp_log VALUES (" + str(int(time())) + "," + str(comp_temp) +");")
     
-    #debug print "Hystereis status:",in_hysteresis
-    
     # > target+heat_tolerance+hysteresis //We're too warm, let's try to cool down
-    #debug print "compare temp with [>] ",(target_temp + heat_tolerance + (hysteresis * in_hysteresis))
     if (comp_temp > (targethigh + (hysteresis * in_hysteresis))):
         GPIO.output(gpo_heat, GPIO.LOW)
         GPIO.output(gpo_target, GPIO.LOW)
@@ -213,7 +205,6 @@ def act_temp():
         return("cool")
     
     # < target-cool_tolerance-hysteresis  //We're too cold, let's try to warm up
-    #debug print "compare temp with [<] ",(target_temp - cool_tolerance - (hysteresis * in_hysteresis))
     if (comp_temp < (targetlow - (hysteresis * in_hysteresis))):
         GPIO.output(gpo_cool, GPIO.LOW)
         GPIO.output(gpo_target, GPIO.LOW)
@@ -228,7 +219,6 @@ def act_temp():
         return("warm")
     
     # <= target+heat_tolerance && >= target+cool_tolerance // temperature's good! Stop adjusting.
-    #debug print "compare temp with [<=] ",(target_temp + heat_tolerance)," [>=] ", (target_temp - cool_tolerance)
     if ((comp_temp <= (targethigh)) and (comp_temp >= (targetlow))):
         GPIO.output(gpo_heat, GPIO.LOW)
         GPIO.output(gpo_cool, GPIO.LOW)
@@ -242,7 +232,6 @@ def act_temp():
         dbconn.commit()
         return("at target")
         
-    #debug print "ELSE"
     # case else
     GPIO.output(gpo_heat, GPIO.LOW)
     GPIO.output(gpo_cool, GPIO.LOW)
