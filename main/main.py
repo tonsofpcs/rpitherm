@@ -101,6 +101,7 @@ def get_temp_F():
     secondline = text.split("\n")[1]
     temperaturedata = secondline.split(" ")[9]
     temperature = float(temperaturedata[2:])
+    if (temperature == 85) or (temperature == -62) return -80 #error reading
     temperature = temperature + calib
     temperature = (temperature * 1.8 + 32000) / 1000
     return temperature
@@ -141,7 +142,7 @@ def main_loop():
             newtemp = get_temp_F()
 #            print "[",datetime.datetime.now(),"] Temp reading: ",newtemp
 #            sys.stdout.flush()
-            if (newtemp == 185.0):
+            if (newtemp == -80):
                current_temp.append(current_temp[-1])
             else:
                current_temp.append(newtemp)
