@@ -168,7 +168,7 @@ def main_loop():
         if (iterator == LCM_rates):
             iterator = 0
             print "[",datetime.datetime.now(),"] reset iterator"
-
+    
 
 def act_temp():
     global in_hysteresis
@@ -197,7 +197,7 @@ def act_temp():
         GPIO.output(gpo_warn, GPIO.LOW)
         GPIO.output(gpo_hold, GPIO.LOW)
         GPIO.output(gpo_cool, GPIO.HIGH)
-	in_hysteresis = 0
+        in_hysteresis = 0
         # write 1 to GPO(relay2) // cool
         print "[",datetime.datetime.now(),"] Status: COOLING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 2);")
@@ -211,7 +211,7 @@ def act_temp():
         GPIO.output(gpo_warn, GPIO.LOW)
         GPIO.output(gpo_hold, GPIO.LOW)
         GPIO.output(gpo_heat, GPIO.HIGH)
-	in_hysteresis = 0
+        in_hysteresis = 0
         # write 1 to GPO(relay1) // heat
         print "[",datetime.datetime.now(),"] Status: WARMING"
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 1);")
@@ -225,13 +225,13 @@ def act_temp():
         GPIO.output(gpo_target, GPIO.HIGH)
         GPIO.output(gpo_warn, GPIO.LOW)
         GPIO.output(gpo_hold, GPIO.LOW)
-	in_hysteresis = 1
+        in_hysteresis = 1
         # write 1 to GPO(LED1) // at target
         print "[",datetime.datetime.now(),"] Status: At target."
         db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 3);")
         dbconn.commit()
         return("at target")
-        
+    
     # case else
     GPIO.output(gpo_heat, GPIO.LOW)
     GPIO.output(gpo_cool, GPIO.LOW)
@@ -243,11 +243,7 @@ def act_temp():
     db.execute("INSERT INTO status_log VALUES (" + str(int(time())) + ", 0);")
     dbconn.commit()
     return("hysteresis")
-  
-
 
 dbconn = sqlite3.connect(sqlite_database)
 first_runtime()
 main_loop()
-
-
