@@ -112,7 +112,7 @@ def get_temp_F():
     secondline = text.split("\n")[1]
     temperaturedata = secondline.split(" ")[9]
     temperature = float(temperaturedata[2:])
-    if ( ( temperature == 85 ) or ( temperature == -62 ) )  #-62000 and 85000 are error returns from the sensor
+    if ( ( temperature == 85 ) or ( temperature == -62 ) ):  #-62000 and 85000 are error returns from the sensor
         return -80                              # error reading, -80 is outside of the range in degrees F and C
     temperature = temperature + calib                       #calibration offset
     temperature = (temperature * 1.8 + 32000) / 1000        #convert C to F
