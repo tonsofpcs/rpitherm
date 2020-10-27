@@ -60,9 +60,9 @@ statuses = { 1    : 70.8, #warming
            }
 
 logdata_avg         = []
-logdata_target      = []
-logdata_target_high = []
-logdata_target_low  = []
+#logdata_target      = []
+logdata_target_high_dates = []
+logdata_target_low_dates  = []
 logdata_status      = []
 logdataitem         = []
 
@@ -105,11 +105,8 @@ if len(logdata_status) == 0:
 #print "Converting date formats"
 logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_avg]
 
-#logdata_target_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target]
-
-logdata_target_high_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[2]) for item in logdata_target]
-
 for item in logdata_target:
+  #logdata_target_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[1]])
   logdata_target_high_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[2]]) 
   logdata_target_low_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[3]])
 
