@@ -100,7 +100,7 @@ if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
 #print "Converting date formats"
-for item in logdata_avg
+for item in logdata_avg:
   logdata_avg_dates = mdates.date2num(datetime.fromtimestamp(item[0]))
   logdata_avg_data = item[1]
 
