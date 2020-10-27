@@ -143,9 +143,8 @@ def first_runtime():
     read_speeds()
 
 def main_loop():
-    inf = 1
     iterator = 0
-    while (inf == 1):
+    while True:
         iterator = iterator + 1
         
         if (iterator % sample_rate)==0:
