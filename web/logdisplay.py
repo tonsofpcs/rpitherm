@@ -86,22 +86,14 @@ db = dbconn.cursor()
 
 db.execute("SELECT * FROM temp_log WHERE datetime >= " + str(logdatastart) + ";")
       # VALUES (" + str(int(time())) + "," + str(comp_temp) +");"
-lines = db.fetchall()
-for line in lines:
-  logdata_avg.append([line[0], float(line[1])]) #datetime, number
+logdata_avg = db.fetchall()
 
 db.execute("SELECT * FROM target_log WHERE datetime >= " + str(logdatastart) + ";")
       # VALUES (" + str(int(time())) + "," + str(target_temp) + "," + str(targethigh) + "," + str(targetlow) + "," + str(hysteresis) + ");"
-lines = db.fetchall()
-for line in lines:
-#  logdata_target.append([line[0], float(line[1])])       #datetime, target
-  logdata_target_high.append([line[0], float(line[2])])  #datetime, hightarget
-  logdata_target_low.append([line[0], float(line[3])])   #datetime, lowtarget
+logdata_target = db.fetchall()     #datetime, target, hightarget, lowtarget
 
 db.execute("SELECT * FROM status_log WHERE datetime >= " + str(logdatastart) + ";")
-lines = db.fetchall()
-for line in lines:
-  logdata_status.append([line[0], statuses[line[1]]])   #datetime, status
+logdata_status = db.fetchall()
 
 #print "Log data loaded"
 dbconn.close()
@@ -115,9 +107,9 @@ logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1])
 
 #logdata_target_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target]
 
-logdata_target_high_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target_high]
+logdata_target_high_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[2]) for item in logdata_target]
 
-logdata_target_low_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_target_low]
+logdata_target_low_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[3]) for item in logdata_target]
 
 logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
