@@ -5,6 +5,7 @@
 # modified 2019-07-18                         #
 # modified 2020-10-24                         #
 # modified 2020-10-25                         #
+# modified 2020-10-27                         #
 # Thermostatic control of energy consumption  #
 # ## Python for Raspberry Pi     ##           #
 # Eric Adler   <tonsofpcs@gmail.com>          #
@@ -149,9 +150,7 @@ def main_loop():
         
         if (iterator % sample_rate)==0:
             newtemp = get_temp_F()
-            if (newtemp == -80):
-               current_temp.append(current_temp[-1])
-            else:
+            if (newtemp != -80):
                current_temp.append(newtemp)
         
         if (iterator % adjust_rate)==0:
@@ -170,8 +169,12 @@ def main_loop():
 def act_temp():
     global in_hysteresis
     # Calculate AVG(current_temp[0-9])
-    comp_temp = sum(current_temp)/len(current_temp)
-    max_temp = max(current_temp)
+    try:
+        comp_temp = sum(current_temp)/len(current_temp)
+        max_temp = max(current_temp)
+    except:
+        return("fault")
+    
     # write AVG and variables(target,heat_tolerance,cool_tolerance) to std-err as "Temp AVG: %d; Target: %d; Tolerances: +%u,-%u".
     print "[",datetime.datetime.now(),"] Target: ",target_temp,", Tolerances: +",heat_tolerance,",-",cool_tolerance,", hysteresis: ",hysteresis
     
