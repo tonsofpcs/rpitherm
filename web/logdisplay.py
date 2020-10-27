@@ -59,7 +59,6 @@ statuses = { 1    : 70.8, #warming
              0    : 70.2  #Hold-off
            }
 
-logdata_target_dates = []
 logdata_target_high = []
 logdata_target_low  = []
 
@@ -100,20 +99,17 @@ if len(logdata_status) == 0:
   raise Exception('Status array empty.')
 
 #print "Converting date formats"
-for item in logdata_avg:
-  logdata_avg_dates = mdates.date2num(datetime.fromtimestamp(item[0]))
-  logdata_avg_data = item[1]
+logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_avg]
 
 for item in logdata_target:
-  #logdata_target_temp.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[1]])
-  logdata_target_dates.append(mdates.date2num(datetime.fromtimestamp(item[0])))
-  logdata_target_high.append(item[2])
-  logdata_target_low.append(item[3])
+  #logdata_target_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[1]])
+  logdata_target_high_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[2]]) 
+  logdata_target_low_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[3]])
 
 logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
 #print "handling data"
-array_avg = np.array([logdata_avg_dates, logdata_avg_data])
+array_avg = np.array(logdata_avg_dates)
 #print "Avg array built"
 try:
   array_avg_y = moving_average(array_avg[:,1], 1500)
@@ -124,9 +120,9 @@ except:
   #print "Moving avg {0} array built".format(arravg_len)
 array_status = np.array(logdata_status_dates)
 #print "Status array built"
-array_upperbound = [logdata_target_dates, logdata_target_high]
+array_upperbound = np.array(logdata_target_high_dates)
 #print "upper bound array built"
-array_lowerbound = [logdata_target_dates, logdata_target_low]
+array_lowerbound = np.array(logdata_target_low_dates)
 #print "lower bound array built"
 
 fig, ax = plt.subplots()
