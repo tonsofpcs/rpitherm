@@ -113,7 +113,7 @@ for item in logdata_target:
 logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
 #print "handling data"
-array_avg = [logdata_avg_dates, logdata_avg_data]
+array_avg = np.array(logdata_avg_dates, logdata_avg_data)
 #print "Avg array built"
 try:
   array_avg_y = moving_average(array_avg[:,1], 1500)
