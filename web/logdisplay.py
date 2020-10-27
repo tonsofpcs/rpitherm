@@ -4,6 +4,7 @@
 # 2014-04-13                          #
 # modified 2020-10-24                 #
 # modified 2020-10-25                 #
+# modified 2020-10-26                 #
 # Eric Adler                          #
 #######################################
 
@@ -58,18 +59,12 @@ statuses = { 1    : 70.8, #warming
              0    : 70.2  #Hold-off
            }
 
-#print "setting log source"
-log_source = "../examples/newsample.log"
-
 logdata_avg         = []
 logdata_target      = []
 logdata_target_high = []
 logdata_target_low  = []
 logdata_status      = []
 logdataitem         = []
-
-#print "opening log file"
-logfile = open(log_source, 'r')
 
 #print "setting plot times"
 logdataend    = int(time())
