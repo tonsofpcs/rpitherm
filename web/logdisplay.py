@@ -59,12 +59,8 @@ statuses = { 1    : 70.8, #warming
              0    : 70.2  #Hold-off
            }
 
-logdata_avg         = []
-#logdata_target      = []
 logdata_target_high_dates = []
 logdata_target_low_dates  = []
-logdata_status      = []
-logdataitem         = []
 
 #print "setting plot times"
 logdataend    = int(time())
