@@ -109,7 +109,9 @@ logdata_avg_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1])
 
 logdata_target_high_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[2]) for item in logdata_target]
 
-logdata_target_low_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[3]) for item in logdata_target]
+for item in logdata_target
+  logdata_target_high_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[2]]) 
+  logdata_target_low_dates.append([mdates.date2num(datetime.fromtimestamp(item[0])), item[3]])
 
 logdata_status_dates = [(mdates.date2num(datetime.fromtimestamp(item[0])), item[1]) for item in logdata_status]
 
